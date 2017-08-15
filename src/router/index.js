@@ -8,6 +8,7 @@ import seller from "../components/seller/seller.vue"
 Vue.use(VueRouter);
 
 export default new VueRouter({
+  linkActiveClass: 'active',
   routes: [
     {path: '/goods',component: goods},
     {path: '/rating',component: rating},
