@@ -2,27 +2,27 @@
     <div class="header">
       <div class="top">
         <div class="avatar">
-          <img src="http://static.galileo.xiaojukeji.com/static/tms/seller_avatar_256px.jpg" width="64px" height="64px">
+          <img :src="seller.avatar" width="64px" height="64px">
         </div>
         <div class="content-wrap">
           <div class="content-title">
             <span class="brandIcon"></span>
-            <span class="name">粥品香坊（回龙观）</span>
+            <span class="name">{{seller.name}}</span>
           </div>
           <div class="content-msg">
-            <span class="send">蜂鸟专送/38分钟送达</span>
+            <span class="send">{{seller.description}}/{{seller.deliveryTime}}分钟送达</span>
           </div>
-          <div class="content-discount">
-            <span class="icon decrease"></span>
-            <span class="pay">在线支付满28减5</span>
+          <div class="content-discount" v-if="seller.supports">
+            <span class="icon" :class="supports[seller.supports[0].type]"></span>
+            <span class="pay">{{seller.supports[0].description}}</span>
           </div>
         </div>
-        <div class="activity">
-          <span class="message">5个</span>
+        <div class="activity" v-if="seller.supports" @click="displayMessage(true)">
+          <span class="message">{{seller.supports.length}}个</span>
           <span class="iconFont icon-keyboard_arrow_right"></span>
         </div>
       </div>
-      <div class="bulletin" >
+      <div class="bulletin" @click="displayMessage(true)">
         <span class="public"></span>
         <span class="message">
           粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
@@ -30,67 +30,66 @@
         <span class="iconFont icon-keyboard_arrow_right"></span>
       </div>
       <div class="background" ></div>
-      <div class="discount-information">
-        <div class="info-content">
-         <div class="content">
-           <h1 class="title">粥品香坊（回龙观）</h1>
-           <div class="stars">
-             <div class="star-content star48">
-               <span class="star on"></span>
-               <span class="star on"></span>
-               <span class="star on"></span>
-               <span class="star half"></span>
-               <span class="star off"></span>
-             </div>
-           </div>
-           <div class="message-contant">
-             <span class="line"></span>
-             <span class="message">优惠信息</span>
-             <span class="line"></span>
-           </div>
-           <ul class="list">
-             <li class="list-contant">
-               <span class="icon decrease"></span>
-               <span class="list-message">在线支付满28减5</span>
-             </li>
-             <li class="list-contant ">
-               <span class="icon discount"></span>
-               <span class="list-message">VC无限橙果汁全场8折</span>
-             </li>
-             <li class="list-contant ">
-               <span class="icon discount"></span>
-               <span class="list-message">单人精彩套餐</span>
-             </li>
-             <li class="list-contant ">
-               <span class="icon invoice"></span>
-               <span class="list-message">该商家支持发票,请下单写好发票抬头</span>
-             </li>
-             <li class="list-contant ">
-               <span class="icon guarantee"></span>
-               <span class="list-message">已加入“外卖保”计划,食品安全保障</span>
-             </li>
-           </ul>
-           <div class="seller-public">
-             <span class="line"></span>
-             <span class="public">商家公告</span>
-             <span class="line"></span>
-           </div>
-           <div class="seller-introduction">
+      <transition name="fade" >
+        <div class="discount-information" v-show="isShow">
+          <div class="info-content">
+            <div class="content">
+              <h1 class="title">{{seller.name}}</h1>
+              <div class="stars">
+                <star :score="seller.score" :size="48"></star>
+              </div>
+              <div class="message-contant">
+                <span class="line"></span>
+                <span class="message">优惠信息</span>
+                <span class="line"></span>
+              </div>
+              <ul class="list" v-if="seller.supports">
+                <li class="list-contant" v-for="message in seller.supports">
+                  <span class="icon" :class="supports[message.type]"></span>
+                  <span class="list-message">{{message.description}}</span>
+                </li>
+              </ul>
+              <div class="seller-public">
+                <span class="line"></span>
+                <span class="public">商家公告</span>
+                <span class="line"></span>
+              </div>
+              <div class="seller-introduction">
              <span class="introduction">
-               粥品香坊其烹饪粥料的秘方源于中国千年古法，在融和现代制作工艺，由世界烹饪大师屈浩先生领衔研发。坚守纯天然、0添加的良心品质深得消费者青睐，发展至今成为粥类的引领品牌。是2008年奥运会和2013年园博会指定餐饮服务商。
+               {{seller.bulletin}}
              </span>
-           </div>
-       </div>
-      </div>
-        <div class="icon-footer">
-          <span class="icon-close"></span>
+              </div>
+            </div>
+          </div>
+          <div class="icon-footer" @click="displayMessage(false)">
+            <span class="icon-close"></span>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
 </template>
 
 <script>
-    export default {}
+  import star from '../stars/star.vue'
+  export default {
+    data () {
+      return {
+        isShow: false,
+        supports: ['decrease','discount','special','invoice','guarantee']
+      }
+    },
+    methods: {
+      displayMessage (message) {
+        this.isShow = message
+      }
+    },
+    props:{
+      seller: Object,
+    },
+    components:{
+      star
+    }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
@@ -119,6 +118,7 @@
             vertical-align top
             width 30px
             height 18px
+            margin-right 4px
             background-repeat no-repeat
             background-size 100% 100%
             bg-color(brand)
@@ -229,51 +229,6 @@
           .stars
             margin 16px 0 28px 0
             height 24px
-            .star-content
-              text-align center
-              .star
-                display inline-block
-                background-size 100% 100%
-                background-repeat no-repeat
-              &.star24
-                .star
-                  width 10px
-                  height 10px
-                  margin-right 10px
-                  &:last-child
-                    margin-right 0
-                  &.on
-                    bg-color("../stars/star24_on")
-                  &.off
-                    bg-color("../stars/star24_off")
-                  &.half
-                    bg-color("../stars/star24_half")
-              &.star36
-                .star
-                  width 15px
-                  height 15px
-                  margin-right 15px
-                  &:last-child
-                    margin-right 0
-                  &.on
-                    bg-color("../stars/star36_on")
-                  &.off
-                    bg-color("../stars/star36_off")
-                  &.half
-                    bg-color("../stars/star36_half")
-              &.star48
-                .star
-                  width 20px
-                  height 20px
-                  margin-right 20px
-                  &:last-child
-                    margin-right 0
-                  &.on
-                    bg-color("../stars/star48_on")
-                  &.off
-                    bg-color("../stars/star48_off")
-                  &.half
-                    bg-color("../stars/star48_half")
           .message-contant
             margin 0 20px
             display flex

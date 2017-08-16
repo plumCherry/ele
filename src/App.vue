@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ele-header></ele-header>
+    <ele-header :seller="information"></ele-header>
     <div class="tab border-1px">
       <div class="tab-item">
         <router-link to="/goods">商品</router-link>
@@ -17,10 +17,35 @@
 </template>
 
 <script>
+  import axios from 'axios'
   import header from './components/header/header.vue'
   export default {
+    data(){
+      return{
+        information : {}
+      }
+    },
     components: {
       'ele-header': header
+    },
+    created(){
+     /* this.$http.get('/api/seller')
+        .then(response => {
+          let result = response.body;
+          if (result.code === 0) {
+            this.information = result.data;
+          }
+        });*/
+      axios.get('/api2/seller')
+        .then((response)=>{
+          let result = response.data;
+          if (result.code === 0) {
+            this.information = result.data;
+          }
+        })
+        .catch((error)=>{
+          console.log(error)
+        })
     }
   }
 </script>
